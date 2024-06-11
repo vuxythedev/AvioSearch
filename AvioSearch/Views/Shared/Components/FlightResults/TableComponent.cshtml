@@ -1,0 +1,33 @@
+﻿@using AvioSearch.Models;
+@model AvioSearch.Models.FlightDataModel
+<body>
+    <table class="table w-100" Id="flight-table">
+        <thead>
+            <tr>
+                <th>Origin</th>
+                <th>Destination</th>
+                <th>Departue date</th>
+                <th>Itineraries</th>
+                <th>Booked</th>
+                <th>Price</th>              
+                <th>Currency</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var flightOffer in Model.FlightOfferList!)
+            {
+                <tr>
+                    <td>@flightOffer.OriginCode</td>
+                    <td>@flightOffer.DestinationCode</td>
+                    <td>@flightOffer.DepartureDate</td>
+                    <td>@flightOffer.Itineraries</td>
+                    <td>@flightOffer.NumberOfBookableSeats</td>
+                    <td>@flightOffer.Price</td>
+                    <td>@flightOffer.CurrencyCode</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</body>

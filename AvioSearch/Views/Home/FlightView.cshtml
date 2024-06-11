@@ -1,0 +1,268 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .form-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin: 0 10px;
+            position: relative;
+            margin-bottom: 40px; /* Add space for the error message */
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 200px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            width: 100%; /* Ensure the message wraps nicely */
+        }
+
+        .btn-search {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 18px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-search:hover {
+            background-color: #45a049;
+        }
+      
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Flight Search</h1>
+            <p>Find the perfect flight for your journey</p>
+        </div>
+
+        <div class="form-container">
+            <div class="form-group">
+                <label for="origin">Origin Airport:</label>
+                <input type="text" id="origin" placeholder="Enter origin airport" required pattern=".{3,}">
+                <span class="error-message" id="origin-error"></span>
+            </div>
+            <div class="form-group">
+                <label for="destination">Destination Airport:</label>
+                <input type="text" id="destination" placeholder="Enter destination airport" required pattern=".{3,}">
+                <span class="error-message" id="destination-error"></span>
+            </div>
+            <div class="form-group">
+                <label for="departure">Departure Date:</label>
+                <input type="date" id="departure" required>
+                <span class="error-message" id="departure-error"></span>
+            </div>
+            <div class="form-group">
+                <label for="adults">Adults Count:</label>
+                <select id="adults">
+                    <option value="1">1 Adult</option>
+                    <option value="2">2 Adults</option>
+                    <option value="3">3 Adults</option>
+                    <option value="4">4 Adults</option>
+                    <option value="5">5 Adults</option>
+                    <option value="6">6 Adults</option>
+                    <option value="7">7 Adults</option>
+                    <option value="8">8 Adults</option>
+                    <option value="9">9 Adults</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="children">Children Count:</label>
+                <select id="children">
+                    <option value="0">Select</option>
+                    <option value="1">1 Child</option>
+                    <option value="2">2 Children</option>
+                    <option value="3">3 Children</option>
+                    <option value="4">4 Children</option>
+                    <option value="5">5 Children</option>
+                    <option value="6">6 Children</option>
+                    <option value="7">7 Children</option>
+                    <option value="8">8 Children</option>
+                    <option value="9">9 Children</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="currency">Currency:</label>
+                <input type="text" id="currency" placeholder="Enter currency">
+            </div>
+        </div>
+        <div class="form-group">
+            <button id="search-flights" class="btn-search">Search Flights</button>
+        </div>
+    </div>
+
+    <div id="flightResults"></div>
+    
+    <script>
+        document.querySelector("#search-flights").addEventListener("click", async function () {
+            let isValid = true;
+
+            const origin = document.querySelector("#origin").value;
+            const destination = document.querySelector("#destination").value;
+            const departure = document.querySelector("#departure").value;
+
+            const originError = document.querySelector("#origin-error");
+            const destinationError = document.querySelector("#destination-error");
+            const departureError = document.querySelector("#departure-error");
+
+            originError.textContent = "";
+            destinationError.textContent = "";
+            departureError.textContent = "";
+
+            if (origin.length !=3) {
+                originError.textContent = "Origin Airport code must be 3 characters long.";
+                isValid = false;
+            }
+
+            if (destination.length < 3) {
+                destinationError.textContent = "Destination Airport code must be 3 characters long.";
+                isValid = false;
+            }
+
+            if (!departure) {
+                departureError.textContent = "Departure Date is required.";
+                isValid = false;
+            }
+
+            if (!isValid) {
+                return;
+            }
+
+            const adults = document.querySelector("#adults").value;
+            const children = document.querySelector("#children").value;
+            const currency = document.querySelector("#currency").value;
+
+            if (currency) {
+                currency = currency.toUpperCase();
+            }
+
+            // Construct the FlightRequest object
+            const flightRequest = {
+                OriginLocationCode: origin.toUpperCase(),
+                DestinationLocationCode: destination.toUpperCase(),
+                DepartureDate: departure,
+                Adults: adults,
+                Children: children,
+                Currency: currency || "EUR"
+            };
+
+            // Construct the URL with FlightRequest parameters
+            const urlParams = new URLSearchParams(Object.entries(flightRequest)).toString();
+            const url = `representFlightData?${urlParams}`;
+
+          
+            // Make the GET request with the constructed URL
+            var response = await fetch(url, { method: "GET" });
+            const htmlContent = await response.text();
+            let parser = new DOMParser();
+            let doc = parser.parseFromString(htmlContent, 'text/html');
+            let content = doc.querySelector("#flight-table").outerHTML;
+            document.querySelector("#flightResults").innerHTML = content;
+        
+        
+        });
+
+        document.querySelector("#origin").addEventListener("input", function () {
+            const originError = document.querySelector("#origin-error");
+            if (this.value.length = 3) {
+                originError.textContent = "";
+            }
+        });
+
+        document.querySelector("#destination").addEventListener("input", function () {
+            const destinationError = document.querySelector("#destination-error");
+            if (this.value.length = 3) {
+                destinationError.textContent = "";
+            }
+        });
+
+        document.querySelector("#departure").addEventListener("input", function () {
+            const departureError = document.querySelector("#departure-error");
+            if (this.value) {
+                departureError.textContent = "";
+            }
+        });
+    </script>
+</body>
+</html>
