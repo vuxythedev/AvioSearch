@@ -4,7 +4,7 @@ using Repository;
 using RepositoryContracts;
 using ServiceContracts;
 using Services;
-using static Services.HostedService;
+using static Services.RemoveOldDataHostedService;
 
 namespace AvioSearch.StartupExtensions
 {
@@ -18,7 +18,7 @@ namespace AvioSearch.StartupExtensions
 
             services.Configure<AmadeusConfigOptions>(configuration.GetSection("AmadeusAccessData"));
             services.Configure<HostedServiceOptions>(configuration.GetSection("HostedService"));
-            services.AddHostedService<HostedService>();
+            services.AddHostedService<RemoveOldDataHostedService>();
 
             #region IOC
 

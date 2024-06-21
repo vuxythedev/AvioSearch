@@ -5,14 +5,14 @@ using ServiceContracts;
 
 namespace Services
 {
-    public class HostedService : IHostedService
+    public class RemoveOldDataHostedService : IHostedService
     {
         private Timer? _timer;
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly HostedServiceOptions _hostedServiceConfigOptions;
 
 
-        public HostedService(IServiceScopeFactory flightSearchService, IOptions<HostedServiceOptions> hostedServiceConfigOptions)
+        public RemoveOldDataHostedService(IServiceScopeFactory flightSearchService, IOptions<HostedServiceOptions> hostedServiceConfigOptions)
         {
             _serviceScopeFactory = flightSearchService;
             _hostedServiceConfigOptions = hostedServiceConfigOptions.Value;
@@ -21,10 +21,10 @@ namespace Services
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            int pruneDataPeriod = int.Parse(_hostedServiceConfigOptions.PruneDataPeriod!);
+            int refreshTime = int.Parse(_hostedServiceConfigOptions.RefreshTime!);
+                
+            _timer = new Timer(async state => await DeleteFlightSearchDataAsync(state), null, TimeSpan.Zero, TimeSpan.FromMinutes(refreshTime));
 
-            _timer = new Timer(callback: DeleteFlightSearchData, null, dueTime: TimeSpan.Zero, period: TimeSpan.FromMinutes(pruneDataPeriod));
-           
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
@@ -36,14 +36,13 @@ namespace Services
         }
        
 
-        private void DeleteFlightSearchData(object? state)
+        private async Task DeleteFlightSearchDataAsync(object? state)
         {
             using (var scope = _serviceScopeFactory.CreateScope())
             {
                 var flightSearchService = scope.ServiceProvider.GetRequiredService<IFlightSearchService>();
-
-                int refreshTime = int.Parse( _hostedServiceConfigOptions.RefreshTime!);
-                flightSearchService.DeleteFlightSearchDataAsync(refreshTime);
+                int pruneDataPeriod = int.Parse(_hostedServiceConfigOptions.PruneDataPeriod!);             
+                await flightSearchService.DeleteFlightSearchDataAsync(pruneDataPeriod);
             }         
         }
 
@@ -53,6 +52,6 @@ namespace Services
             public string? PruneDataPeriod { get; set; }
             public string? RefreshTime { get; set; }           
         }
-
+     
     }
 }

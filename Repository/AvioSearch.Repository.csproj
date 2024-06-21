@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Entities\Entities.csproj" />
-    <ProjectReference Include="..\RepositoryContracts\RepositoryContracts.csproj" />
+    <ProjectReference Include="..\Entities\AvioSearch.Entities.csproj" />
+    <ProjectReference Include="..\RepositoryContracts\AvioSearch.RepositoryContracts.csproj" />
   </ItemGroup>
 
 </Project>
